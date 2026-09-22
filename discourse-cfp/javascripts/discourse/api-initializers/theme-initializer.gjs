@@ -21,6 +21,8 @@ const EMPTY_COSPEAKER = () => ({
   homeAirport: "",
 });
 
+const CFP_RECIPIENT_GROUP = "Ubuntu-Summit-Core";
+
 export default apiInitializer("1.8", (api) => {
   class UbuntuSummitCfp extends Component {
     @tracked currentStep = 1;
@@ -215,9 +217,8 @@ export default apiInitializer("1.8", (api) => {
         : window.location.origin + response.url;
     }
 
-    buildSpeakerMarkdown(title, speaker, included) {
+    buildSpeakerMarkdown(title, speaker) {
       return `### ${title}\n` +
-        (included === undefined ? "" : `* **Included:** ${included ? "Yes" : "No"}\n`) +
         `* **Email:** ${speaker.email || "Not provided"}\n` +
         `* **Name:** ${speaker.name || "Not provided"}\n` +
         `* **Pronouns:** ${speaker.pronouns || "Not provided"}\n` +
@@ -277,11 +278,11 @@ export default apiInitializer("1.8", (api) => {
         markdownBody += `### Speaker needs\n* **In-person attendance:** ${this.inPersonAttendance}\n* **Accommodations:** ${this.accommodations || "None"}\n`;
         markdownBody += `* **Travel sponsorship:** ${this.travelSponsorship}\n* **UK Visa/ETA:** ${this.visa}\n* **Home airport:** ${this.homeAirport}\n\n`;
         this.coSpeakers.forEach((speaker, index) => {
-          const title = `Co-speaker ${index + 1}`;
           if (this.includeCoSpeakers[index]) {
-            markdownBody += this.buildSpeakerMarkdown(title, speaker, true);
-          } else {
-            markdownBody += this.buildSpeakerMarkdown(title, speaker, false);
+            markdownBody += this.buildSpeakerMarkdown(
+              `Co-speaker ${index + 1}`,
+              speaker
+            );
           }
         });
         markdownBody += `### Privacy and review\n* **Privacy notice accepted:** ${this.privacyAgreement ? "Yes" : "No"}\n`;
@@ -293,7 +294,7 @@ export default apiInitializer("1.8", (api) => {
             title: `[CFP Submission] ${this.talkTitle}`,
             raw: markdownBody,
             archetype: "private_message",
-            target_recipients: "Ubuntu-Summit-Core",
+            target_recipients: CFP_RECIPIENT_GROUP,
           },
         });
         this.submissionSuccess = true;
