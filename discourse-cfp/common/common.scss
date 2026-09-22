@@ -25,7 +25,7 @@
 }
 
 .cfp-field {
-  margin-bottom: 15px; 
+  margin-bottom: 15px;
 }
 
 .cfp-field label {
@@ -44,6 +44,61 @@
   background: var(--blend-lightish);
   color: var(--primary);
   box-sizing: border-box;
+}
+
+.cfp-stepper {
+  display: flex;
+  gap: 0.5rem;
+  margin: 1.5rem 0;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+
+.cfp-stepper span {
+  color: var(--primary-medium);
+  font-size: 0.9em;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.cfp-stepper span.active {
+  border-bottom: 2px solid #e95420;
+  color: var(--primary);
+}
+
+.cfp-step-content {
+  border: 1px solid var(--primary-low);
+  border-radius: 4px;
+  margin-bottom: 20px;
+  padding: 15px;
+}
+
+.cfp-step-content legend {
+  font-weight: bold;
+  padding: 0 10px;
+}
+
+.cfp-step-content small,
+.cfp-step-content label span {
+  color: var(--primary-medium);
+  font-weight: normal;
+}
+
+.cfp-step-content small {
+  display: block;
+  margin-top: 5px;
+}
+
+.cfp-form-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.cfp-review-box {
+  background: var(--primary-very-low);
+  padding: 12px;
+  white-space: pre-wrap;
 }
 
 textarea.cfp-input {
