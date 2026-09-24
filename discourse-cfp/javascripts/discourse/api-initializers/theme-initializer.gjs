@@ -61,8 +61,25 @@ export default apiInitializer("1.8", (api) => {
       super(...args);
       const user = this.currentUser;
       this.speakerName = user?.name || user?.username || "";
-      this.speakerEmail = user?.email || "";
+      this.speakerEmail = user?.email || user?.primary_email || "";
+      console.log("Current user:", user);
       this.speakerUsername = user?.username || "";
+
+      if (user && !this.speakerEmail) {
+        this.loadCurrentUserEmail();
+      }
+    }
+
+    async loadCurrentUserEmail() {
+      try {
+        const response = await ajax("/session/current.json");
+        const email = response?.current_user?.email || response?.user?.email;
+        if (email && !this.speakerEmail) {
+          this.speakerEmail = email;
+        }
+      } catch {
+        // The form remains usable if the session endpoint is unavailable.
+      }
     }
 
     get currentUser() {
@@ -76,7 +93,7 @@ export default apiInitializer("1.8", (api) => {
     get stepLabels() {
       return [
         { number: 1, label: "Speaker" },
-        { number: 2, label: "Session Details" },
+        { number: 2, label: "Session" },
         { number: 3, label: "Unconference" },
         { number: 4, label: "Speaker needs" },
         { number: 5, label: "Co-speaker 1" },
@@ -372,9 +389,9 @@ export default apiInitializer("1.8", (api) => {
                     <div class="cfp-field"><label for="cfp-airport">Home airport</label><input id="cfp-airport" class="cfp-input" type="text" value={{this.homeAirport}} data-field="homeAirport" {{on "input" this.updateField}} /></div>
                   </fieldset>
                 {{else if (and (gte this.currentStep 5) (lte this.currentStep 7))}}
-                  <fieldset class="cfp-step-content"><legend>{{this.currentStep}}. Co-speaker {{this.currentStep}}</legend>
+                  <fieldset class="cfp-step-content"><legend>{{this.currentStep}}. Co-speaker {{this.currentCoSpeakerIndex}}</legend>
                     <p>Co-speakers are optional. Select the toggle below to include this speaker.</p>
-                    <div class="cfp-field"><label><input type="checkbox" checked={{this.includeCurrentCoSpeaker}} data-index={{this.currentCoSpeakerIndex}} {{on "change" this.toggleCoSpeaker}} /> Include co-speaker {{this.currentStep}}</label></div>
+                    <div class="cfp-field"><label><input type="checkbox" checked={{this.includeCurrentCoSpeaker}} data-index={{this.currentCoSpeakerIndex}} {{on "change" this.toggleCoSpeaker}} /> Include co-speaker {{this.currentCoSpeakerIndex}}</label></div>
                     <div class="cfp-field"><label>Email <span>(required when included)</span></label><input class="cfp-input" type="email" data-index={{this.currentCoSpeakerIndex}} data-field="email" value={{this.currentCoSpeaker.email}} {{on "input" this.updateCoSpeaker}} /></div>
                     <div class="cfp-field"><label>Name <span>(required when included)</span></label><input class="cfp-input" type="text" data-index={{this.currentCoSpeakerIndex}} data-field="name" value={{this.currentCoSpeaker.name}} {{on "input" this.updateCoSpeaker}} /></div>
                     <div class="cfp-field"><label>Pronouns</label><input class="cfp-input" type="text" data-index={{this.currentCoSpeakerIndex}} data-field="pronouns" value={{this.currentCoSpeaker.pronouns}} {{on "input" this.updateCoSpeaker}} /></div>
